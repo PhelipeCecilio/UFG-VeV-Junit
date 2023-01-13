@@ -1,5 +1,7 @@
 package org.example;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 public class TabelaIRRF {
@@ -16,39 +18,38 @@ public class TabelaIRRF {
     public static final double valorSuperiorFaixa3 = 4664.68;
     public static final double aliquotaFaixa3 = 0.225;
     public static final double parcelaDeduzirFaixa3 = 636.13;
-
     public static final double valorFaixa4 = 4664.69;
     public static final double aliquotaFaixa4 = 0.275;
     public static final double parcelaDeduzirFaixa4 = 869.36;
     public static final double descontoPorDependente = 189.59;
 
 
-    public static double calcularIRRF(double salarioBruto, int quantidadeDependentes) {
-        double descontoPrevidenciario = salarioBruto * 0.1425;
-        double descontoDependentes = descontoPorDependente * quantidadeDependentes;
-        double valorTributavel = salarioBruto - descontoPrevidenciario - descontoDependentes;
-        double valorIrrf = 0.0;
+    public static BigDecimal calcularIRRF(double salarioBruto, int quantidadeDependentes) {
+        BigDecimal valorIrrf = new BigDecimal(0.00).setScale(2, RoundingMode.HALF_UP);
+        if (salarioBruto > 0.00 && quantidadeDependentes >= 0) {
+            double descontoPrevidenciario = salarioBruto * 0.10;
+            double descontoDependentes = descontoPorDependente * quantidadeDependentes;
+            BigDecimal valorTributavel = new BigDecimal(salarioBruto - descontoPrevidenciario - descontoDependentes).setScale(2, RoundingMode.HALF_UP);
 
-        if (valorTributavel <= valorIsencao) {
-            valorIrrf = 0.0;
-        } else if (salarioBruto >= valorInferiorFaixa1 && valorTributavel <= valorSuperiorFaixa1) {
-            valorIrrf = (valorTributavel * aliquotaFaixa1) - parcelaDeduzirFaixa1;
-        } else if (valorTributavel >= valorInferiorFaixa2 && valorTributavel <= valorSuperiorFaixa2) {
-            valorIrrf = (valorTributavel * aliquotaFaixa2) - parcelaDeduzirFaixa2;
-        } else if (valorTributavel >= valorInferiorFaixa3 && valorTributavel <= valorSuperiorFaixa3) {
-            valorIrrf = (valorTributavel * aliquotaFaixa3) - parcelaDeduzirFaixa3;
-        } else {
-            valorIrrf = (valorTributavel * aliquotaFaixa4) - parcelaDeduzirFaixa4;
+            if (valorTributavel.doubleValue() <= valorIsencao) {
+                valorIrrf = BigDecimal.valueOf(0.00);
+            } else if (valorTributavel.doubleValue() >= valorInferiorFaixa1 && valorTributavel.doubleValue() <= valorSuperiorFaixa1) {
+                valorIrrf = valorTributavel.multiply(BigDecimal.valueOf(aliquotaFaixa1)).subtract(BigDecimal.valueOf(parcelaDeduzirFaixa1));
+            } else if (valorTributavel.doubleValue() >= valorInferiorFaixa2 && valorTributavel.doubleValue() <= valorSuperiorFaixa2) {
+                valorIrrf = valorTributavel.multiply(BigDecimal.valueOf(aliquotaFaixa2)).subtract(BigDecimal.valueOf(parcelaDeduzirFaixa2));
+            } else if (valorTributavel.doubleValue() >= valorInferiorFaixa3 && valorTributavel.doubleValue() <= valorSuperiorFaixa3) {
+                valorIrrf = valorTributavel.multiply(BigDecimal.valueOf(aliquotaFaixa3)).subtract(BigDecimal.valueOf(parcelaDeduzirFaixa3));
+            } else {
+                valorIrrf = valorTributavel.multiply(BigDecimal.valueOf(aliquotaFaixa4)).subtract(BigDecimal.valueOf(parcelaDeduzirFaixa4));
+            }
         }
-
         return valorIrrf;
     }
 
     public static void main(String[] args) {
-        double irrf = TabelaIRRF.calcularIRRF(30000.00, 3);
-        //String resultado = String.format("%.2f",irrf);
-        System.out.printf("%.2f", irrf);
+        double irrf = TabelaIRRF.calcularIRRF(12997.45, 3).doubleValue();
+        BigDecimal bdResult = new BigDecimal(irrf).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal bdExpected = new BigDecimal(2191.10).setScale(2, RoundingMode.HALF_UP);
+        System.out.println(bdResult + ", " + bdExpected);
     }
-
-
 }

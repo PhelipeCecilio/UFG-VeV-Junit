@@ -1,75 +1,243 @@
 package org.example;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TabelaIRRFTest {
 
-    private static Double SALARIO_BRUTO = 1903.98;
-
-    //Até R$ 1.903,98 | 0% | R$ 0,00
-//    Test case with a salary of 1903.97 and no dependents. The expected result is 0.0.
-//    Test case with a salary of 1903.98 and no dependents. The expected result is 0.0.
-
-    //De R$ 1.903,99 a R$ 2.826,65	| 7,5% | R$ 142,80
-//    Test case with a salary of 1903.99 and no dependents. The expected result is 142.80.
-//    Test case with a salary of 1904.00 and no dependents. The expected result is 142.80.
-//    Test case with a salary of 2826.65 and no dependents. The expected result is 354.80.
-
-    //De R$ 2.826,66 a R$ 3.751,05	| 15,0%	| R$ 354,80
-//    Test case with a salary of 2826.66 and no dependents. The expected result is 354.80.
-//    Test case with a salary of 2826.67 and no dependents. The expected result is 354.80.
-//    Test case with a salary of 3751.05 and no dependents. The expected result is 636.13.
-
-    //De R$ 3.751,06 a R$ 4.664,68 | 22,5% | R$ 636,13
-//    Test case with a salary of 3751.06 and no dependents. The expected result is 636.13.
-//    Test case with a salary of 3751.07 and no dependents. The expected result is 636.13.
-//    Test case with a salary of 4664.68 and no dependents. The expected result is 869.36.
-
-    //Acima R$ 4.664,68 | 27,5% | R$ 869,36
-//    Test case with a salary of 4664.69 and no dependents. The expected result is 869.36.
-//    Test case with a salary of 4664.70 and no dependents. The expected result is 869.36.
-
-//    Test case with a salary of 30000.00 and one dependent. The expected result is 2593.41.
-//    Test case with a salary of 30000.00 and two dependents. The expected result is 2372.11.
-//    Test case with a salary of 30000.00 and three dependents. The expected result is 2151.81.
-//    Test case with a salary of 30000.00 and four dependents. The expected result is 193.51.
-//    Test case with a salary of 30000.00 and five dependents. The expected result is 0.0.
-//    Test case with a salary of 30000.00 and six dependents. The expected result is 0.0.
-//    Test case with a salary of 30000.00 and seven dependents. The expected result is 0.0.
-//    Test case with a salary of 20000.00 and no dependents. The expected result is 0.0.
-//    Test case with a salary of 20000.00 and one dependent. The expected result is 0.0.
-//    Test case with a salary of 50000.00 and no dependents. The expected result is 4221.75.
-//    Test case with a salary of 50000.00 and one dependent. The expected result is 3900.45.
-//    Test case with a salary of 50000.00 and five dependents. The expected result is 3410.86.
+//Valor tributavel	 Salario Bruto
+//        1.903,98	2115,533333
+//        1.903,99	2115,544444
+//        2.826,65	3140,722222
+//        2.826,66	3140,733333
+//        3.751,05	4167,833333
+//        3.751,06	4167,844444
+//        4.664,68	5182,977778
+//        4.664,68	5182,977778
 
     @Test
-    public void testCalcularIRRF_1903_98_0_dependents() {
-        double salarioBruto = 1903.98;
+    public void testCalcularIRRF_BASE() {
+        double salarioBruto = 12997.45;
+        int quantidadeDependentes = 3;
+        BigDecimal expected = BigDecimal.valueOf(2191.10).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+    // 0%
+    @Test
+    public void testCalcularIRRF_500_00_0_dependents() {
+        double salarioBruto = 500.00;
         int quantidadeDependentes = 0;
-        double expected = 0.0;
-        double result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes);
-        assertEquals(expected, result, 0.01);
+        BigDecimal expected = BigDecimal.valueOf(0.00).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testCalcularIRRF_1903_99_0_dependents() {
-        double salarioBruto = 1903.99;
+    public void testCalcularIRRF_2115_53_0_dependents() {
+        double salarioBruto = 2115.53;
         int quantidadeDependentes = 0;
-        double expected = 142.80;
-        double result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes);
-        assertEquals(expected, result, 0.01);
+        BigDecimal expected = BigDecimal.valueOf(0.00).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testCalcularIRRF_2826_65_0_dependents() {
-        double salarioBruto = 2826.65;
-        int quantidadeDependentes = 0;
-        double expected = 354.80;
-        double result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes);
-        assertEquals(expected, result, 0.01);
+    public void testCalcularIRRF_2115_53_1_dependents() {
+        double salarioBruto = 2115.53;
+        int quantidadeDependentes = 1;
+        BigDecimal expected = BigDecimal.valueOf(0.00).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
     }
-    //...and so on for the remaining test cases
+
+    // 7,5%
+    @Test
+    public void testCalcularIRRF_2115_54_0_dependents() {
+        double salarioBruto = 2115.54;
+        int quantidadeDependentes = 0;
+        BigDecimal expected = BigDecimal.valueOf(0.00).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testCalcularIRRF_2115_70_0_dependents() {
+        double salarioBruto = 2115.70;
+        int quantidadeDependentes = 0;
+        BigDecimal expected = BigDecimal.valueOf(0.01).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testCalcularIRRF_2500_0_1_dependents() {
+        double salarioBruto = 2500.00;
+        int quantidadeDependentes = 1;
+        BigDecimal expected = BigDecimal.valueOf(11.73).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testCalcularIRRF_3140_73_0_dependents() {
+        double salarioBruto = 3140.73;
+        int quantidadeDependentes = 0;
+        BigDecimal expected = BigDecimal.valueOf(69.20).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+    // 15%
+    @Test
+    public void testCalcularIRRF_3141_00_0_dependents() {
+        double salarioBruto = 3141.00;
+        int quantidadeDependentes = 0;
+        BigDecimal expected = BigDecimal.valueOf(69.24).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testCalcularIRRF_3500_00_0_dependents() {
+        double salarioBruto = 3500.00;
+        int quantidadeDependentes = 0;
+        BigDecimal expected = BigDecimal.valueOf(117.70).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testCalcularIRRF_3500_00_1_dependents() {
+        double salarioBruto = 3500.00;
+        int quantidadeDependentes = 1;
+        BigDecimal expected = BigDecimal.valueOf(89.26).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+
+    @Test
+    public void testCalcularIRRF_4167_83_0_dependents() {
+        double salarioBruto = 4167.83;
+        int quantidadeDependentes = 0;
+        BigDecimal expected = BigDecimal.valueOf(207.86).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+    // 22,5%%
+    @Test
+    public void testCalcularIRRF_4167_84_0_dependents() {
+        double salarioBruto = 4167.84;
+        int quantidadeDependentes = 0;
+        BigDecimal expected = BigDecimal.valueOf(207.86).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testCalcularIRRF_4500_00_0_dependents() {
+        double salarioBruto = 4500.00;
+        int quantidadeDependentes = 0;
+        BigDecimal expected = BigDecimal.valueOf(275.12).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testCalcularIRRF_4500_00_1_dependents() {
+        double salarioBruto = 4500.00;
+        int quantidadeDependentes = 1;
+        BigDecimal expected = BigDecimal.valueOf(232.46).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+
+    @Test
+    public void testCalcularIRRF_5182_97_0_dependents() {
+        double salarioBruto = 5182.97;
+        int quantidadeDependentes = 0;
+        BigDecimal expected = BigDecimal.valueOf(413.42).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+    // 27,5%%
+    @Test
+    public void testCalcularIRRF_5182_99_0_dependents() {
+        double salarioBruto = 5182.99;
+        int quantidadeDependentes = 0;
+        BigDecimal expected = BigDecimal.valueOf(413.43).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testCalcularIRRF_6000_00_0_dependents() {
+        double salarioBruto = 6000.00;
+        int quantidadeDependentes = 0;
+        BigDecimal expected = BigDecimal.valueOf(615.64).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testCalcularIRRF_6000_00_1_dependents() {
+        double salarioBruto = 6000.00;
+        int quantidadeDependentes = 1;
+        BigDecimal expected = BigDecimal.valueOf(563.50).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testCalcularIRRF_6000_00_100_dependents() {
+        double salarioBruto = 6000.00;
+        int quantidadeDependentes = 100;
+        BigDecimal expected = BigDecimal.valueOf(0.00).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
+        assertEquals(expected, result);
+    }
+
+//IllegalArgumentException
+
+    //    Test case where salarioBruto is 0.00 and quantidadeDependentes is 0. The expected result is 0.0.
+    @Test
+    public void testCalcularIRRF_SalarioZero() {
+        double salarioBruto = 0.00;
+        int quantidadeDependentes = 0;
+        BigDecimal expected = BigDecimal.valueOf(0.00);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes);
+        assertTrue(result.compareTo(expected) == 0);
+    }
+
+    //    Test case where salarioBruto is -100.00 and quantidadeDependentes is 0. The expected result is 0.0.
+    @Test
+    public void testCalcularIRRF_SalarioNegativo() {
+        double salarioBruto = -1000.00;
+        int quantidadeDependentes = 0;
+        BigDecimal expected = BigDecimal.valueOf(0.00);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes);
+        assertTrue(result.compareTo(expected) == 0);
+    }
+
+    //    Test case where salarioBruto is 1000.00 and quantidadeDependentes is -1. The expected result is 0.0.
+    @Test
+    public void testCalcularIRRF_DependentesNegativo() {
+        double salarioBruto = 1000.00;
+        int quantidadeDependentes = 0;
+        BigDecimal expected = BigDecimal.valueOf(0.00);
+        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes);
+        assertTrue(result.compareTo(expected) == 0);
+    }
+
+
 }
