@@ -1,12 +1,13 @@
 package org.example;
 
+import org.example.exceptions.QuantidadeDependentesInvalidaException;
+import org.example.exceptions.RemuneracaoInvalidaException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TabelaIRRFTest {
 
@@ -201,10 +202,10 @@ class TabelaIRRFTest {
     @Test
     public void testCalcularIRRF_6000_00_100_dependents() {
         double salarioBruto = 6000.00;
-        int quantidadeDependentes = 100;
-        BigDecimal expected = BigDecimal.valueOf(0.00).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP);
-        assertEquals(expected, result);
+        int quantidadeDependentes = 6;
+        Exception exception = assertThrows(QuantidadeDependentesInvalidaException.class, () ->
+                TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes).setScale(2, RoundingMode.HALF_UP));
+        assertEquals("A quantidade de dependentes não é válida!", exception.getMessage());
     }
 
 //IllegalArgumentException
@@ -224,9 +225,9 @@ class TabelaIRRFTest {
     public void testCalcularIRRF_SalarioNegativo() {
         double salarioBruto = -1000.00;
         int quantidadeDependentes = 0;
-        BigDecimal expected = BigDecimal.valueOf(0.00);
-        BigDecimal result = TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes);
-        assertTrue(result.compareTo(expected) == 0);
+        Exception exception = assertThrows(RemuneracaoInvalidaException.class, () ->
+                TabelaIRRF.calcularIRRF(salarioBruto, quantidadeDependentes));
+        assertEquals("O valor da remuneração não é válido!", exception.getMessage());
     }
 
     //    Test case where salarioBruto is 1000.00 and quantidadeDependentes is -1. The expected result is 0.0.
@@ -239,5 +240,11 @@ class TabelaIRRFTest {
         assertTrue(result.compareTo(expected) == 0);
     }
 
-
+    @Test
+    public void testExemplo(){
+        double irrf = TabelaIRRF.calcularIRRF(12997.45,3).doubleValue();
+        BigDecimal resultadoObtido = new BigDecimal(irrf).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal resultadoEsperado = new BigDecimal(2191.10).setScale(2,RoundingMode.HALF_UP);
+        assertEquals(resultadoObtido,resultadoEsperado);
+    }
 }
